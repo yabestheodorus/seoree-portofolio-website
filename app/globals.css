@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-green: oklch(0.21 0.065 162);
+  --color-brand-green-mid: oklch(0.28 0.07 162);
+  --color-brand-cream: oklch(0.97 0.018 85);
+  --color-brand-cream-dark: oklch(0.92 0.025 80);
+  --color-brand-gold: oklch(0.72 0.10 82);
+  --color-brand-ink: oklch(0.14 0.04 162);
+
+  --font-display: "Bebas Neue", sans-serif;
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Space Grotesk", sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --green: oklch(0.21 0.065 162);
+  --green-mid: oklch(0.28 0.07 162);
+  --cream: oklch(0.97 0.018 85);
+  --cream-dark: oklch(0.92 0.025 80);
+  --gold: oklch(0.72 0.10 82);
+  --ink: oklch(0.14 0.04 162);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    cursor: none;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom cursor styles that are hard to do with utility classes only */
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+#cursor .dot {
+  width: 10px;
+  height: 10px;
+  background: var(--cream);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s;
+}
+
+#cursor .ring {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--cream);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), width 0.3s, height 0.3s;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  margin-top: -5px;
+  margin-left: -5px;
+}
+
+body.hovering #cursor .ring {
+  width: 60px;
+  height: 60px;
+  margin-top: -15px;
+  margin-left: -15px;
+}
+
+/* Scroll reveal utility classes mapped from original */
+.reveal {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* Custom clip paths for animations */
+.clip-diagonal {
+  clip-path: polygon(0 0, 58% 0, 42% 100%, 0 100%);
+}
+
+.clip-diagonal-2 {
+  clip-path: polygon(78% 0, 100% 0, 100% 100%, 62% 100%);
+}
+
+.clip-none {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.clip-vertical-slit {
+  clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+}
+
+.clip-empty {
+  clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%);
 }
