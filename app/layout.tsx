@@ -1,23 +1,31 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Cormorant_Garamond, Space_Grotesk } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import CustomCursor from "@/components/CustomCursor";
+import SmoothScroll from "@/components/SmoothScroll";
+import { Barlow_Condensed, Space_Grotesk, Space_Mono, Bungee_Shade } from "next/font/google";
 import "./globals.css";
 
-const bebasNeue = Bebas_Neue({
-  weight: "400",
-  variable: "--font-display",
+const barlowCondensed = Barlow_Condensed({
+  weight: "900",
+  variable: "--next-bungee",
   subsets: ["latin"],
 });
 
-const cormorantGaramond = Cormorant_Garamond({
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
+const bungeeShade = Bungee_Shade({
+  weight: "400",
+  variable: "--font-bungee-shade",
   subsets: ["latin"],
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-sans",
   subsets: ["latin"],
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-space",
+  subsets: ["latin"],
+  weight: ['400', '700']
 });
 
 export const metadata: Metadata = {
@@ -33,10 +41,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebasNeue.variable} ${cormorantGaramond.variable} ${spaceGrotesk.variable} antialiased`}
+      className={`${barlowCondensed.variable} ${bungeeShade.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
     >
       <body className="min-h-screen bg-brand-cream text-brand-ink selection:bg-brand-gold selection:text-brand-ink">
-        {children}
+        <CustomCursor />
+        <SmoothScroll>
+          <Navbar />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

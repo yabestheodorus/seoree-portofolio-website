@@ -1,41 +1,88 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-green: oklch(0.21 0.065 162);
-  --color-brand-green-mid: oklch(0.28 0.07 162);
-  --color-brand-cream: oklch(0.97 0.018 85);
-  --color-brand-cream-dark: oklch(0.92 0.025 80);
-  --color-brand-gold: oklch(0.72 0.10 82);
-  --color-brand-ink: oklch(0.14 0.04 162);
+  /* ── Light neutrals ── */
+  --color-brand-linen: #FCFCFA;
+  /* near-white clean linen */
+  --color-brand-cream: #FDFDFB;
+  /* main background - close to white */
+  --color-brand-cream-dark: #F5F3E7;
+  /* slightly deeper cream */
+  --color-brand-sand: #C8BD9A;
+  /* warm tan mid-light */
 
-  --font-display: "Bebas Neue", sans-serif;
-  --font-serif: "Cormorant Garamond", serif;
-  --font-sans: "Space Grotesk", sans-serif;
+  /* ── Accent warm ── */
+  --color-brand-rust: #B84C2A;
+  /* terracotta — warm complement to teal */
+  --color-brand-rust-light: #D4724D;
+  /* lighter rust for hover states */
+  --color-brand-amber: #C89B3C;
+  /* warm amber/honey */
+
+  /* ── Mid tones ── */
+  --color-brand-sage: #6E8B78;
+  /* muted eucalyptus, bridges cream ↔ ink */
+  --color-brand-sage-light: #A8C2B2;
+  /* lighter sage for backgrounds */
+
+  /* ── Dark tones ── */
+  --color-brand-ink-light: #1A5568;
+  /* lifted teal for lighter dark contexts */
+  --color-brand-ink-mid: #0a4f5e;
+  /* existing mid */
+  --color-brand-ink: #02343F;
+  /* main dark */
+  --color-brand-ink-deep: #011F28;
+  /* deepest, near-black with warmth */
+  --color-brand-black: #0D0D0C;
+  /* true dark / almost black */
+
+  /* ── Legacy / utility ── */
+  --color-brand-gold: #FFFDF8;
+  /* near-white highlight */
+
+  --font-bungee: var(--next-bungee), "Barlow Condensed", sans-serif;
+  --font-bungee-shade: var(--font-bungee-shade);
+  --font-sans: var(--font-sans), "Space Grotesk", sans-serif;
+  --font-space: var(--font-space), "Space Mono", monospace;
 }
 
 :root {
-  --green: oklch(0.21 0.065 162);
-  --green-mid: oklch(0.28 0.07 162);
-  --cream: oklch(0.97 0.018 85);
-  --cream-dark: oklch(0.92 0.025 80);
-  --gold: oklch(0.72 0.10 82);
-  --ink: oklch(0.14 0.04 162);
+  /* light */
+  --linen: #FCFCFA;
+  --cream: #FDFDFB;
+  --cream-dark: #F5F3E7;
+  --sand: #C8BD9A;
+  /* accent warm */
+  --rust: #B84C2A;
+  --rust-light: #D4724D;
+  --amber: #C89B3C;
+  /* mid */
+  --sage: #6E8B78;
+  --sage-light: #A8C2B2;
+  /* dark */
+  --ink-light: #1A5568;
+  --ink-mid: #0a4f5e;
+  --ink: #02343F;
+  --ink-deep: #011F28;
+  --black: #0D0D0C;
 }
 
 @layer base {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html {}
 
   body {
-    background: var(--cream);
-    color: var(--ink);
+    background: var(--black);
+    color: var(--cream);
     font-family: var(--font-sans);
     overflow-x: hidden;
     cursor: none;
@@ -94,9 +141,17 @@ body.hovering #cursor .ring {
   transform: translateY(0);
 }
 
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.reveal-delay-2 {
+  transition-delay: 0.2s;
+}
+
+.reveal-delay-3 {
+  transition-delay: 0.3s;
+}
 
 /* Custom clip paths for animations */
 .clip-diagonal {
@@ -117,4 +172,56 @@ body.hovering #cursor .ring {
 
 .clip-empty {
   clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%);
+}
+
+/* Geometric pattern background */
+.bg-geometry-pattern {
+  background-color: var(--black);
+  background-image:
+    /* Left half: Repeating sharp concentric rings (clipped at 50%) */
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 1px, transparent 1px, transparent 55px),
+    /* Mask to hide grid on left half */
+    linear-gradient(to right, var(--black) 50%, transparent 50%),
+    /* Right half: Grid pattern */
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 2px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 2px, transparent 1px) !important;
+  background-size:
+    50% 100%,
+    100% 100%,
+    80px 80px, 80px 80px,
+    40px 40px, 40px 40px !important;
+  background-position:
+    left,
+    0 0,
+    0 0, 0 0,
+    0 0, 0 0 !important;
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat !important;
+}
+
+/* Light variant of the geometry pattern for cream/light backgrounds */
+.bg-geometry-pattern-light {
+  background-color: var(--cream);
+  background-image:
+    /* Left half: Repeating sharp concentric rings (clipped at 50%) */
+    repeating-radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 55px),
+    /* Mask to hide grid on left half */
+    linear-gradient(to right, var(--cream) 50%, transparent 50%),
+    /* Right half: Grid pattern */
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 2px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 2px, transparent 1px) !important;
+  background-size:
+    50% 100%,
+    100% 100%,
+    80px 80px, 80px 80px,
+    40px 40px, 40px 40px !important;
+  background-position:
+    left,
+    0 0,
+    0 0, 0 0,
+    0 0, 0 0 !important;
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat !important;
 }
