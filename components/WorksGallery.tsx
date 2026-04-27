@@ -1,16 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
+import Image from "next/image";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(Flip, ScrollTrigger, ScrollSmoother);
 }
+
+// useSyncExternalStore helpers — stable identities so the hook doesn't resubscribe.
+const subscribeNoop = () => () => {};
+const getMountedClient = () => true;
+const getMountedServer = () => false;
 
 interface WorksGalleryProps {
   images: string[];
@@ -39,6 +45,15 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const isAnimatingRef = useRef(false);
+
+  // Defer portal render to after hydration — useSyncExternalStore returns
+  // the server snapshot (false) during SSR and the client snapshot (true)
+  // after hydration, so the SSR/client trees match.
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    getMountedClient,
+    getMountedServer
+  );
 
   const flipIdSelector = "[data-flip-id^='img-']";
   const scrollScrollerToTop = () => {
@@ -216,7 +231,7 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
 
       {/* ── Portal lightbox: rendered into <body> to escape ScrollSmoother's
             transform context so `position: fixed` and native scroll work. */}
-      {typeof document !== "undefined" &&
+      {mounted &&
         createPortal(
           <div
             ref={overlayRef}
@@ -254,12 +269,14 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
                 className="min-h-full w-full flex items-start md:items-center justify-center px-4 py-20 md:px-16 md:py-20"
               >
                 {activeIdx !== null && (
-                  <img
+                  <Image
                     data-flip-id={`img-${activeIdx}`}
                     src={images[activeIdx]}
                     alt={`${title} — image ${activeIdx + 1}`}
                     draggable={false}
                     onClick={(e) => e.stopPropagation()}
+                    width={1024}
+                    height={1024}
                     className="block w-auto h-auto max-w-full select-none shadow-2xl cursor-default"
                   />
                 )}

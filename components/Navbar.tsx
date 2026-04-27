@@ -9,7 +9,43 @@ export default function Navbar() {
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(() => {
-    gsap.fromTo(ref.current, { opacity: 0 }, { opacity: 1, visibility: "visible", duration: 0.8, delay: 2.2 });
+    if (!ref.current) return;
+    const tl = gsap.timeline({ delay: 2.0 });
+
+    gsap.set(ref.current, { autoAlpha: 1 });
+    gsap.set([".nav-left-item", ".nav-right-item"], { y: -16, opacity: 0 });
+
+    tl.to(".nav-left-item", {
+      y: 0,
+      opacity: 1,
+      duration: 0.7,
+      ease: "power3.out",
+      stagger: 0.06,
+    })
+      .to(
+        ".nav-right-item",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          ease: "power3.out",
+          stagger: 0.05,
+        },
+        "<0.05"
+      )
+      .to(
+        ".nav-dot",
+        {
+          scale: 1.6,
+          opacity: 0.35,
+          duration: 1.2,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+          transformOrigin: "center",
+        },
+        ">-0.2"
+      );
   }, { scope: ref });
 
   const handleNav = useCallback((target: string) => {
@@ -31,23 +67,44 @@ export default function Navbar() {
   return (
     <header
       ref={ref}
-      style={{ visibility: "hidden" }}
+      style={{ visibility: "hidden", opacity: 0 }}
       className="fixed top-0 left-0 right-0 w-full flex justify-between items-center px-4 py-4 md:px-8 md:py-6 text-[12px] md:text-[14px] font-black tracking-widest uppercase text-brand-linen z-50"
     >
       <div className="flex gap-6 md:gap-16 items-center">
-        FAKHRI AKMAL
-        <div className="flex items-center gap-2">
-          <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-brand-linen rounded-full"></div>
+        <span className="nav-left-item inline-block">FAKHRI AKMAL</span>
+
+        <div className="nav-left-item flex items-center gap-2 group">
+          <span className="relative inline-flex w-1 h-1 md:w-1.5 md:h-1.5">
+            <span className="nav-dot absolute inset-0 bg-brand-linen rounded-full" />
+          </span>
           BOGOR, ID
         </div>
 
-        <p className="hidden md:block max-w-xs text-[11px] font-space font-base normal-case text-left"> &nbsp;&nbsp;&nbsp;&nbsp;A graphic designer who loves turning ideas into cool visuals. Let's create something awesome together!</p>
-        <div className="hidden md:flex flex-col font-space normal-case">
-          <span>Let's chat</span>
-          <span>fakhreemal@gmail.com</span>
-        </div>
+        <p className="nav-left-item hidden md:block max-w-xs text-[11px] font-space font-base normal-case text-left">
+          &nbsp;&nbsp;&nbsp;&nbsp;A graphic designer who loves turning ideas into cool visuals. Let&apos;s create something awesome together!
+        </p>
 
-
+        <a
+          href="mailto:fakhreemal@gmail.com"
+          className="nav-left-item hidden md:flex flex-col font-space normal-case group leading-tight"
+        >
+          <span className="flex items-center gap-1.5 text-brand-linen/80 group-hover:text-brand-linen transition-colors duration-300">
+            Let&apos;s chat
+            <span
+              aria-hidden
+              className="inline-block translate-x-0 -translate-y-px opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ease-out"
+            >
+              ↗
+            </span>
+          </span>
+          <span className="relative w-fit">
+            fakhreemal@gmail.com
+            <span
+              aria-hidden
+              className="absolute left-0 -bottom-px h-px w-full origin-left scale-x-0 bg-brand-linen group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.3,1)]"
+            />
+          </span>
+        </a>
       </div>
 
       <nav className="hidden md:flex gap-4 md:gap-8">
@@ -55,9 +112,23 @@ export default function Navbar() {
           <button
             key={item.label}
             onClick={() => handleNav(item.target)}
-            className="hover:opacity-70 transition-opacity cursor-pointer"
+            className="nav-right-item group relative inline-block leading-none cursor-pointer overflow-hidden h-3.5"
           >
-            {item.label}
+            {/* Stack two copies — top one slides up & out, bottom one slides up into place */}
+            <span className="block transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:-translate-y-full">
+              {item.label}
+            </span>
+            <span
+              aria-hidden
+              className="absolute inset-0 block translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.3,1)] group-hover:translate-y-0"
+            >
+              {item.label}
+            </span>
+            {/* Tiny accent rule that draws under the active hover */}
+            <span
+              aria-hidden
+              className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-linen group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.3,1)]"
+            />
           </button>
         ))}
       </nav>
