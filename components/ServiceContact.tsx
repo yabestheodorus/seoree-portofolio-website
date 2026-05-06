@@ -69,7 +69,7 @@ export default function ServiceContact() {
         stagger: 0.03,
         scrollTrigger: {
           trigger: servicesRef.current?.querySelector(".svc-title"),
-          start: "top 85%",
+          start: "top 95%",
           toggleActions: "play none none reverse",
         },
       });
@@ -86,7 +86,7 @@ export default function ServiceContact() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: "top 85%",
+            start: "top 92%",
             toggleActions: "play none none reverse",
           },
         });
@@ -108,7 +108,7 @@ export default function ServiceContact() {
           ease: "power3.inOut",
           scrollTrigger: {
             trigger: div,
-            start: "top 90%",
+            start: "top bottom",
             toggleActions: "play none none reverse",
           },
         });

@@ -45,8 +45,8 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-brand-cream text-brand-ink selection:bg-brand-gold selection:text-brand-ink">
         <CustomCursor />
+        <Navbar />
         <SmoothScroll>
-          <Navbar />
           {children}
         </SmoothScroll>
       </body>

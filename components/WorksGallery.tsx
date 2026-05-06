@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 }
 
 // useSyncExternalStore helpers — stable identities so the hook doesn't resubscribe.
-const subscribeNoop = () => () => {};
+const subscribeNoop = () => () => { };
 const getMountedClient = () => true;
 const getMountedServer = () => false;
 
@@ -97,7 +97,13 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
     if (isAnimatingRef.current) return;
     isAnimatingRef.current = true;
 
-    const state = Flip.getState(flipIdSelector);
+    // Freeze masonry layout to prevent shifting during re-renders
+    const tiles = gridRef.current?.querySelectorAll<HTMLElement>(".gallery-tile");
+    tiles?.forEach(tile => {
+      tile.style.height = `${tile.offsetHeight}px`;
+    });
+
+    const state = Flip.getState(flipIdSelector, { props: "object-fit,border-radius" });
     setActiveIdx(idx);
 
     requestAnimationFrame(() => {
@@ -124,11 +130,17 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
     }
     scrollScrollerToTop();
 
-    const state = Flip.getState(flipIdSelector);
+    const state = Flip.getState(flipIdSelector, { props: "object-fit,border-radius" });
     setActiveIdx(null);
 
     requestAnimationFrame(() => {
-      runFlip(state, 0.7);
+      runFlip(state, 0.7, () => {
+        // Unfreeze masonry layout
+        const tiles = gridRef.current?.querySelectorAll<HTMLElement>(".gallery-tile");
+        tiles?.forEach(tile => {
+          tile.style.height = "";
+        });
+      });
     });
   }, [activeIdx, runFlip]);
 
@@ -148,7 +160,7 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
         });
       }
 
-      const state = Flip.getState(flipIdSelector);
+      const state = Flip.getState(flipIdSelector, { props: "object-fit,border-radius" });
       setActiveIdx(nextIdx);
 
       requestAnimationFrame(() => {
@@ -221,8 +233,8 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
                 alt={`${title} — image ${i + 1}`}
                 loading={i === 0 ? "eager" : "lazy"}
                 draggable={false}
-                style={isActive ? { visibility: "hidden" } : undefined}
-                className="block w-full h-auto select-none transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.02]"
+                style={isActive ? { opacity: 0, pointerEvents: "none" } : undefined}
+                className={`block w-full h-auto select-none transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.02] ${activeIdx !== null ? "!transition-none" : ""}`}
               />
             </figure>
           );
@@ -237,8 +249,8 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
             ref={overlayRef}
             aria-hidden={activeIdx === null}
             className={
-              "fixed inset-0 z-[100] " +
-              (activeIdx === null ? "pointer-events-none" : "")
+              "fixed inset-0 z-[100] transition-opacity duration-500 " +
+              (activeIdx === null ? "pointer-events-none opacity-0" : "opacity-100")
             }
           >
             {/* Backdrop */}
@@ -269,15 +281,13 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
                 className="min-h-full w-full flex items-start md:items-center justify-center px-4 py-20 md:px-16 md:py-20"
               >
                 {activeIdx !== null && (
-                  <Image
+                  <img
                     data-flip-id={`img-${activeIdx}`}
                     src={images[activeIdx]}
                     alt={`${title} — image ${activeIdx + 1}`}
                     draggable={false}
                     onClick={(e) => e.stopPropagation()}
-                    width={1024}
-                    height={1024}
-                    className="block w-auto h-auto max-w-full select-none shadow-2xl cursor-default"
+                    className="block w-auto h-auto max-w-full max-h-[85vh] select-none shadow-2xl cursor-default"
                   />
                 )}
               </div>

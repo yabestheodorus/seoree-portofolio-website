@@ -95,6 +95,7 @@ export default function Quote() {
   return (
     <section
       ref={sectionRef}
+      id="about"
       className="relative w-full min-h-screen lg:py-132 bg-brand-ink-deep bg-geometry-pattern bg-fixed flex items-center justify-center py-20 px-4 md:px-20 overflow-hidden [--black:var(--ink-deep)]"
     >
       {/* Left parallax column */}
