@@ -112,14 +112,14 @@ export default function Navbar() {
         <div className="flex gap-6 md:gap-16 items-center">
           <span className="nav-left-item inline-block">FAKHRI AKMAL</span>
 
-          <div className="nav-left-item flex items-center gap-2 group">
+          <div className="nav-left-item hidden lg:block flex items-center gap-2 group">
             <span className="relative inline-flex w-1 h-1 md:w-1.5 md:h-1.5">
               <span className="nav-dot absolute inset-0 bg-brand-linen rounded-full" />
             </span>
             BOGOR, ID
           </div>
 
-          <p className="nav-left-item hidden md:block max-w-xs text-[11px] font-space font-base normal-case text-left">
+          <p className="nav-left-item hidden lg:block max-w-xs text-[11px] font-space font-base normal-case text-left">
             &nbsp;&nbsp;&nbsp;&nbsp;A graphic designer who loves turning ideas into cool visuals. Let&apos;s create something awesome together!
           </p>
 
@@ -146,7 +146,7 @@ export default function Navbar() {
           </a>
         </div>
 
-        <nav className="hidden md:flex gap-4 md:gap-8">
+        <nav className="flex gap-4 md:gap-8">
           {navItems.map((item) => (
             <button
               key={item.label}
