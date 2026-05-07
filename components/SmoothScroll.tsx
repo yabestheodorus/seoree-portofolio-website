@@ -7,6 +7,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  gsap.ticker.lagSmoothing(1000, 16);
 }
 
 export default function SmoothScroll({
@@ -20,9 +21,10 @@ export default function SmoothScroll({
     smoother.current = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 2,
+      smooth: 1,
       effects: true,
-      smoothTouch: 2,
+      smoothTouch: 0.1,
+      normalizeScroll: true,
     });
 
     return () => {

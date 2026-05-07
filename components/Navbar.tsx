@@ -3,7 +3,6 @@
 import React, { useRef, useCallback } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -83,13 +82,19 @@ export default function Navbar() {
 
   const handleNav = useCallback((target: string) => {
     if (pathname === "/") {
-      const smoother = ScrollSmoother.get();
-      if (smoother) {
-        smoother.scrollTo(target, true, "top top");
-      } else {
-        document.querySelector(target)?.scrollIntoView({ behavior: "smooth" });
+      const element = document.querySelector(target);
+      const lenis = (window as any).lenis;
+      if (lenis && typeof lenis.scrollTo === 'function' && element) {
+        lenis.scrollTo(target, { 
+          offset: 0, 
+          duration: 1.5,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        });
+      } else if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
       }
     } else {
+      // If we are on a detail page, go back home to the specific section
       router.push(`/${target}`);
     }
   }, [pathname, router]);

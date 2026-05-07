@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import CustomCursor from "@/components/CustomCursor";
-import SmoothScroll from "@/components/SmoothScroll";
+import LenisProvider from "@/components/LenisProvider";
 import { Barlow_Condensed, Space_Grotesk, Space_Mono, Bungee_Shade } from "next/font/google";
 import "./globals.css";
 
@@ -46,9 +46,9 @@ export default function RootLayout({
       <body className="min-h-screen bg-brand-cream text-brand-ink selection:bg-brand-gold selection:text-brand-ink">
         <CustomCursor />
         <Navbar />
-        <SmoothScroll>
+        <LenisProvider>
           {children}
-        </SmoothScroll>
+        </LenisProvider>
       </body>
     </html>
   );

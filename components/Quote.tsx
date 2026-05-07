@@ -13,17 +13,17 @@ if (typeof window !== "undefined") {
 }
 
 const leftImages = [
-  { src: "/images/event1/d1.png", label: "Poster Design" },
-  { src: "/images/event2/d1.png", label: "Event Visual" },
-  { src: "/images/event3/d1.png", label: "Motion Works" },
-  { src: "/images/event4/d1.png", label: "Branding" },
+  { src: "/images/Poster Design/5 TRAVEL MISTAKES.png", label: "Poster Design" },
+  { src: "/images/Event Campaigns/HL.png", label: "Event Visual" },
+  { src: "/images/Event Campaigns/POSTER.png", label: "Motion Works" },
+  { src: "/images/Product Visuals/DEPAN.png", label: "Branding" },
 ];
 
 const rightImages = [
-  { src: "/images/event1/d2.png", label: "Editorial" },
-  { src: "/images/event5/d1.png", label: "Campaign" },
-  { src: "/images/event3/d3.png", label: "3D Render" },
-  { src: "/images/event4/d3.png", label: "Typography" },
+  { src: "/images/Poster Design/IDUL ADHA.png", label: "Editorial" },
+  { src: "/images/Event Campaigns/POSTER V2.1.png", label: "Campaign" },
+  { src: "/images/Product Visuals/BUKU YONO.png", label: "3D Render" },
+  { src: "/images/Poster Design/IU.png", label: "Typography" },
 ];
 
 export default function Quote() {

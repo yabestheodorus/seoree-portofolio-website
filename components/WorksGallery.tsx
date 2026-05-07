@@ -6,11 +6,10 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
 import Image from "next/image";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(Flip, ScrollTrigger, ScrollSmoother);
+  gsap.registerPlugin(Flip, ScrollTrigger);
 }
 
 // useSyncExternalStore helpers — stable identities so the hook doesn't resubscribe.
@@ -191,15 +190,14 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // Pause the smoother — its wheel/touch normalizer otherwise consumes
-    // events even outside #smooth-content.
-    const smoother = ScrollSmoother.get();
-    smoother?.paused(true);
+    // Pause Lenis smooth scrolling when lightbox is active
+    const lenis = (window as any).lenis;
+    lenis?.stop();
 
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
-      smoother?.paused(false);
+      lenis?.start();
     };
   }, [activeIdx, close, step]);
 
