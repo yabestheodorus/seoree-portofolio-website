@@ -171,7 +171,7 @@ export default function Works() {
               </span>
 
               {/* Title Content */}
-              <div className="grow  flex items-start gap-2 md:gap-6 pointer-events-none w-full">
+              <div className="grow  flex flex-col md:flex-row items-start gap-2 md:gap-6 pointer-events-none w-full">
 
                 <div className="w-fit flex-none">
                   <span className="work-title  font-bungee text-[12vw] md:text-[6.5vw] leading-[1.1] uppercase tracking-normal text-brand-linen/30 group-hover:text-brand-linen transition-colors duration-500">
