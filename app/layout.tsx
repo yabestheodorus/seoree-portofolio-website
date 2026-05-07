@@ -29,7 +29,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SEOREE — Editorial Portfolio",
+  title: "Fakhri Akmal — Editorial Portfolio",
   description: "Art Direction & Editorial Design Portfolio",
 };
 

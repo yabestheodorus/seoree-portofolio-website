@@ -222,7 +222,7 @@ export default function Works() {
       {/* Hidden Preloader for Mobile/Desktop smooth transitions */}
       <div className="sr-only" aria-hidden="true">
         {works.map((work) => (
-          <img key={work.index} src={work.image} alt="" />
+          <Image key={work.index} src={work.image} alt="" width={100} height={100} priority />
         ))}
       </div>
 

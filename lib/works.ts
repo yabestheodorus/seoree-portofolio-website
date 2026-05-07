@@ -80,4 +80,21 @@ export const works: WorkItem[] = [
     fg: "var(--cream)",
     accent: "brand-amber",
   },
+  {
+    index: "04",
+    slug: "case-studies",
+    title: "CASE STUDIES",
+    category: "RESEARCH & STRATEGY",
+    year: "2024",
+    image: `${BASE}/Case Studies/case_studies_1.webp`,
+    images: [
+      `${BASE}/Case Studies/case_studies_1.webp`,
+      `${BASE}/Case Studies/case_studies_2.webp`,
+      `${BASE}/Case Studies/case_studies_3.webp`,
+      `${BASE}/Case Studies/case_studies_4.webp`,
+    ],
+    bg: "var(--sand)",
+    fg: "var(--ink)",
+    accent: "brand-sage-light",
+  },
 ];

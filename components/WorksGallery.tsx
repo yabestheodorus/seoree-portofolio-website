@@ -24,19 +24,30 @@ interface WorksGalleryProps {
 }
 
 /**
- * Gallery + Flip lightbox.
- *
- * The lightbox is rendered through a React Portal into <body> so that
- * `position: fixed` is anchored to the viewport. (The page is wrapped in
- * GSAP ScrollSmoother which applies a `transform: matrix3d(...)` to
- * #smooth-content — that transform makes any fixed descendant positioned
- * relative to the wrapper, breaking native scroll on the lightbox.)
- *
- * Flip matches the grid thumbnail and the portal image via `data-flip-id`.
- * Only one element ever holds a given id at a time:
- *   - inactive: grid <img> has  data-flip-id="img-N"
- *   - active:   grid <img> has  no id (and visibility: hidden), portal <img> has it
+ * Gallery Image component with blur-up optimization
  */
+function GalleryImage({ src, alt, width, height, quality = 70, priority = false, sizes = "33vw", className = "", imgClassName = "", flipId = "" }: any) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  return (
+    <div className={`relative ${className}`}>
+      <Image
+        data-flip-id={flipId || undefined}
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        quality={quality}
+        priority={priority}
+        sizes={sizes}
+        onLoad={() => setIsLoaded(true)}
+        className={`w-full h-auto select-none transition-[filter,opacity] duration-1000 ease-out ${imgClassName} ${isLoaded ? "blur-0 opacity-100" : "blur-2xl opacity-0"}`}
+        draggable={false}
+      />
+    </div>
+  );
+}
+
 export default function WorksGallery({ images, title, accentColor }: WorksGalleryProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -45,9 +56,7 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const isAnimatingRef = useRef(false);
 
-  // Defer portal render to after hydration — useSyncExternalStore returns
-  // the server snapshot (false) during SSR and the client snapshot (true)
-  // after hydration, so the SSR/client trees match.
+  // Defer portal render to after hydration
   const mounted = useSyncExternalStore(
     subscribeNoop,
     getMountedClient,
@@ -213,34 +222,35 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
               className="gallery-tile group relative break-inside-avoid mb-3 md:mb-5 cursor-zoom-in"
               onClick={() => !isActive && openAt(i)}
             >
-              <span className="pointer-events-none absolute top-3 left-3 z-10 font-space text-[9px] tracking-[0.3em] uppercase text-brand-linen/0 group-hover:text-brand-linen/90 transition-colors duration-500 mix-blend-difference">
+              <span className="pointer-events-none absolute top-3 left-3 z-20 font-space text-[9px] tracking-[0.3em] uppercase text-brand-linen/0 group-hover:text-brand-linen/90 transition-colors duration-500 mix-blend-difference">
                 {String(i + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
               </span>
-              <span className="pointer-events-none absolute bottom-3 right-3 z-10 flex items-center gap-2 font-space text-[9px] tracking-[0.3em] uppercase opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 text-brand-linen mix-blend-difference">
+              <span className="pointer-events-none absolute bottom-3 right-3 z-20 flex items-center gap-2 font-space text-[9px] tracking-[0.3em] uppercase opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 text-brand-linen mix-blend-difference">
                 View
                 <span aria-hidden>↗</span>
               </span>
               <span
-                className="pointer-events-none absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                className="pointer-events-none absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 style={{ boxShadow: `inset 0 0 0 1px ${accentColor}` }}
               />
 
-              <img
-                data-flip-id={isActive ? undefined : `img-${i}`}
+              <GalleryImage
                 src={src}
                 alt={`${title} — image ${i + 1}`}
-                loading={i === 0 ? "eager" : "lazy"}
-                draggable={false}
+                width={800}
+                height={1200}
+                priority={i < 3}
+                flipId={isActive ? "" : `img-${i}`}
+                className={`transition-transform duration-700 ease-out group-hover:scale-[1.02] ${activeIdx !== null ? "!transition-none" : ""}`}
                 style={isActive ? { opacity: 0, pointerEvents: "none" } : undefined}
-                className={`block w-full h-auto select-none transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.02] ${activeIdx !== null ? "!transition-none" : ""}`}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </figure>
           );
         })}
       </div>
 
-      {/* ── Portal lightbox: rendered into <body> to escape ScrollSmoother's
-            transform context so `position: fixed` and native scroll work. */}
+      {/* ── Portal lightbox ── */}
       {mounted &&
         createPortal(
           <div
@@ -264,7 +274,6 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
             <div
               ref={scrollerRef}
               onClick={(e) => {
-                // close when clicking outside the image (the centering wrapper)
                 if (e.target === e.currentTarget || (e.target as HTMLElement).dataset.lightboxBg) {
                   close();
                 }
@@ -279,51 +288,46 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
                 className="min-h-full w-full flex items-start md:items-center justify-center px-4 py-20 md:px-16 md:py-20"
               >
                 {activeIdx !== null && (
-                  <img
-                    data-flip-id={`img-${activeIdx}`}
-                    src={images[activeIdx]}
-                    alt={`${title} — image ${activeIdx + 1}`}
-                    draggable={false}
-                    onClick={(e) => e.stopPropagation()}
-                    className="block w-auto h-auto max-w-full max-h-[85vh] select-none shadow-2xl cursor-default"
-                  />
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <GalleryImage
+                      src={images[activeIdx]}
+                      alt={`${title} — image ${activeIdx + 1}`}
+                      width={1920}
+                      height={1080}
+                      quality={90}
+                      priority
+                      flipId={`img-${activeIdx}`}
+                      className="shadow-2xl cursor-default"
+                      imgClassName="max-w-full max-h-[85vh] object-contain !w-auto !h-auto"
+                      sizes="90vw"
+                    />
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Top-left meta */}
+            {/* Overlay UI (Caption, Buttons, etc.) */}
             <div className="overlay-chrome pointer-events-none absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-3">
-              <span
-                className="font-space text-[10px] tracking-[0.3em] uppercase"
-                style={{ color: accentColor }}
-              >
-                {title}
-              </span>
+              <span className="font-space text-[10px] tracking-[0.3em] uppercase" style={{ color: accentColor }}>{title}</span>
               <span className="font-space text-[10px] tracking-[0.3em] text-brand-cream/55">/</span>
               <span ref={captionRef} className="font-space text-[10px] tracking-[0.3em] uppercase text-brand-cream/60">
-                {activeIdx !== null
-                  ? `${String(activeIdx + 1).padStart(2, "0")} — ${String(images.length).padStart(2, "0")}`
-                  : ""}
+                {activeIdx !== null ? `${String(activeIdx + 1).padStart(2, "0")} — ${String(images.length).padStart(2, "0")}` : ""}
               </span>
             </div>
 
-            {/* Top-right close */}
             <button
               type="button"
               onClick={close}
               aria-label="Close"
               className="overlay-chrome absolute top-5 right-5 md:top-7 md:right-7 group flex items-center gap-3 px-3 py-2"
             >
-              <span className="font-space text-[10px] tracking-[0.3em] uppercase text-brand-cream/60 group-hover:text-brand-cream transition-colors">
-                Close
-              </span>
+              <span className="font-space text-[10px] tracking-[0.3em] uppercase text-brand-cream/60 group-hover:text-brand-cream transition-colors">Close</span>
               <span className="relative w-6 h-6 flex items-center justify-center">
                 <span className="absolute w-5 h-px bg-brand-cream/70 group-hover:bg-brand-cream rotate-45 transition-colors" />
                 <span className="absolute w-5 h-px bg-brand-cream/70 group-hover:bg-brand-cream -rotate-45 transition-colors" />
               </span>
             </button>
 
-            {/* Prev / Next */}
             {images.length > 1 && (
               <>
                 <button
@@ -355,14 +359,12 @@ export default function WorksGallery({ images, title, accentColor }: WorksGaller
               </>
             )}
 
-            {/* Bottom hint */}
             <div className="overlay-chrome pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 font-space text-[9px] tracking-[0.3em] uppercase text-brand-cream/60">
               <span>Esc — Close</span>
               <span className="text-brand-cream/35">·</span>
               <span>← / → — Navigate</span>
             </div>
 
-            {/* Progress rule */}
             <div
               className="overlay-chrome absolute bottom-0 left-0 h-px"
               style={{
