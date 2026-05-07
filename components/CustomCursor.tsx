@@ -12,22 +12,19 @@ export default function CustomCursor() {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
+    const xTo = gsap.quickTo(ringRef.current, "x", { duration: 0.15, ease: "power2.out" });
+    const yTo = gsap.quickTo(ringRef.current, "y", { duration: 0.15, ease: "power2.out" });
+    const dotX = gsap.quickSetter(dotRef.current, "x", "px");
+    const dotY = gsap.quickSetter(dotRef.current, "y", "px");
+
     const onMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
       
-      // Move dot immediately
-      gsap.set(dotRef.current, {
-        x: clientX,
-        y: clientY,
-      });
+      dotX(clientX);
+      dotY(clientY);
 
-      // Ring follows with lag
-      gsap.to(ringRef.current, {
-        x: clientX,
-        y: clientY,
-        duration: 0.35,
-        ease: "power2.out",
-      });
+      xTo(clientX);
+      yTo(clientY);
     };
 
     window.addEventListener("mousemove", onMouseMove);

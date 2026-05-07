@@ -80,7 +80,6 @@ export default function Works() {
         const rows = rowsRef.current?.querySelectorAll(".work-row");
         rows?.forEach((row) => {
           const title = row.querySelector(".work-title");
-          const preview = row.querySelector(".mobile-preview");
           const category = row.querySelector(".work-category");
 
           gsap.timeline({
@@ -92,12 +91,7 @@ export default function Works() {
             }
           })
             .fromTo(title, { color: "rgba(250, 249, 246, 0.3)" }, { color: "#faf9f6", duration: 0.25 })
-            .fromTo(category, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.25 }, 0)
-            .fromTo(preview,
-              { height: 0, opacity: 0 },
-              { height: "auto", opacity: 1, duration: 0.4, ease: "power2.inOut" },
-              0
-            );
+            .fromTo(category, { opacity: 0 }, { opacity: 1, duration: 0.25 }, 0);
         });
       }
     });
@@ -167,7 +161,7 @@ export default function Works() {
             <Link
               key={work.index}
               href={`/works/${work.slug}`}
-              className="work-row group relative flex flex-col md:flex-row items-stretch md:items-start px-4 md:px-12 py-2 md:py-8 border-b border-brand-linen/5 cursor-pointer overflow-hidden"
+              className="work-row group relative flex flex-col md:flex-row items-start px-4 md:px-12 py-2 md:py-8 border-b border-brand-linen/5 cursor-pointer overflow-hidden"
               onMouseEnter={() => handleMouseEnter(i)}
               onMouseLeave={handleMouseLeave}
             >
@@ -177,31 +171,22 @@ export default function Works() {
               </span>
 
               {/* Title Content */}
-              <div className="grow flex flex-col md:flex-row md:items-baseline gap-4 md:gap-10 pointer-events-none items-center md:items-start text-center md:text-left w-full">
-                <span className="work-title font-bungee text-[12vw] md:text-[6.5vw] leading-[0.85] uppercase tracking-normal text-brand-linen/30 group-hover:text-brand-linen transition-colors duration-500">
-                  {work.title}
-                </span>
+              <div className="grow  flex items-start gap-2 md:gap-6 pointer-events-none w-full">
+
+                <div className="w-fit flex-none">
+                  <span className="work-title  font-bungee text-[12vw] md:text-[6.5vw] leading-[1.1] uppercase tracking-normal text-brand-linen/30 group-hover:text-brand-linen transition-colors duration-500">
+                    {work.title}
+                  </span>
+                </div>
 
                 {/* Category info */}
-                <div className="work-category flex items-center justify-center md:justify-start gap-3 md:opacity-0 md:translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
+                <div className="work-category grow flex md:justify-start gap-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-6 transition-all duration-300 ease-out ">
                   <span className="font-space text-[10px] tracking-[0.3em] uppercase text-brand-linen/60 whitespace-nowrap">
-                    {work.category}
+                    {work.category} &nbsp; ↗
                   </span>
-                  <span className="font-space text-[11px] text-brand-rust">↗</span>
                 </div>
 
-                {/* MOBILE PREVIEW (visible on mobile scroll) */}
-                <div className="mobile-preview md:hidden w-full h-0 opacity-0 overflow-hidden mt-6">
-                  <div className="relative aspect-[1/2] w-full">
-                    <Image
-                      src={work.image}
-                      alt={work.title}
-                      fill
-                      className="object-contain"
-                      sizes="90vw"
-                    />
-                  </div>
-                </div>
+
               </div>
 
               {/* Hover highlight background (desktop) */}
