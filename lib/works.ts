@@ -89,8 +89,6 @@ export const works: WorkItem[] = [
     image: `${BASE}/Case Studies/case_studies_1.webp`,
     images: [
       `${BASE}/Case Studies/case_studies_1.webp`,
-      `${BASE}/Case Studies/case_studies_2.webp`,
-      `${BASE}/Case Studies/case_studies_3.webp`,
       `${BASE}/Case Studies/case_studies_4.webp`,
     ],
     bg: "var(--sand)",
